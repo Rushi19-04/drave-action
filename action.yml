@@ -1,0 +1,38 @@
+name: 'DRAVE Detection Validator'
+description: 'Run the DRAVE validation engine against your Sigma/detection rules. Computes real evidence reports (syntax, schema, tests, attack replay, robustness, volume) and syncs results to the DRAVE SaaS dashboard.'
+author: 'Rushi19-04'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  rule-paths:
+    description: 'Path to the directory containing your detection rule YAML files.'
+    required: false
+    default: 'detections/rules'
+  api-key:
+    description: 'Your DRAVE CI API Key (generate from Dashboard → API Keys & Integrations). Pass as a GitHub Secret.'
+    required: true
+  api-url:
+    description: 'DRAVE SaaS API base URL. Override only if using a self-hosted instance.'
+    required: false
+    default: 'https://drave-bfsi.onrender.com'
+
+outputs:
+  total:
+    description: 'Total number of rules processed.'
+  passed:
+    description: 'Number of rules that passed all hard gates.'
+  failed:
+    description: 'Number of rules that failed hard gates.'
+  synced:
+    description: 'Number of rules successfully synced to the DRAVE API.'
+
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/rushi19-04/drave-engine:1'
+  env:
+    INPUT_RULE_PATHS: ${{ inputs.rule-paths }}
+    INPUT_API_KEY: ${{ inputs.api-key }}
+    INPUT_API_URL: ${{ inputs.api-url }}
